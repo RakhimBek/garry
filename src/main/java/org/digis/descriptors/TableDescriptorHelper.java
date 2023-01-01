@@ -42,12 +42,6 @@ public class TableDescriptorHelper {
 		final var builder = factory.newDocumentBuilder();
 		final var document = builder.parse(new InputSource(reader));
 		final var schemaElement = document.getDocumentElement();
-		//final var tableName = schemaElement.getElementsByTagName("xs:element")
-		//		.item(0)
-		//		.getAttributes()
-		//		.getNamedItem("name")
-		//		.getNodeValue();
-
 		try {
 			final var descriptor = new TableDescriptor(tableName);
 			final var attributes = schemaElement.getElementsByTagName("xs:attribute");
