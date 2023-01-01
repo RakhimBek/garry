@@ -133,14 +133,6 @@ public class TableDescriptorHelper {
 						);
 					}
 
-					//if ("xs:minLength".equals(child.getNodeName())) {
-					//	return new VarcharDescriptor(
-					//			name,
-					//			sqlType,
-					//			255
-					//	);
-					//}
-
 					if ("xs:enumeration".equals(child.getNodeName())) {
 						int maxEnumSize = 0;
 						for (int k = 0; k < childNodes.getLength(); k++) {
