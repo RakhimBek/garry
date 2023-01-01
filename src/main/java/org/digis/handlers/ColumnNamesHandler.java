@@ -1,4 +1,4 @@
-package org.digis;
+package org.digis.handlers;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -13,8 +13,7 @@ public class ColumnNamesHandler extends DefaultHandler {
 
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) {
-		final var length = attributes.getLength();
-		for (int index = 0; index < length; index++) {
+		for (int index = 0; index < attributes.getLength(); index++) {
 			final var attributesLocalName = attributes.getLocalName(index);
 			attributesSet.add(attributesLocalName);
 		}
