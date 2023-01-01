@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class CsvRowsWriterHandler extends DefaultHandler {
-	private static final String EMPTY_STRING = "";
+	private static final String EMPTY_STRING = "\"\"";
 	private static final byte[] NEW_LINE_BYTES = String.format("%n").getBytes(StandardCharsets.UTF_8);
 
 	private final String delimiter;
@@ -64,10 +64,9 @@ public class CsvRowsWriterHandler extends DefaultHandler {
 		final List<String> csvValues = new ArrayList<>();
 		for (String column : columns) {
 			final var value = Objects.requireNonNullElse(values.get(column), EMPTY_STRING)
-					.trim()
-					.replaceAll("\"", "\\\"");
+					.trim();
 
-			csvValues.add("\"" + value + "\"");
+			csvValues.add(value);
 		}
 
 		try {
