@@ -7,7 +7,6 @@ import java.util.List;
 
 public class TableDescriptor {
 	private static final String newline = String.format("%n");
-	private static final String delimiter = "\t";
 	private final String name;
 	private final List<ColumnDescriptor> columnsDescriptors = new ArrayList<>();
 
@@ -21,13 +20,6 @@ public class TableDescriptor {
 
 	public void addAll(List<ColumnDescriptor> columnDescriptors) {
 		columnsDescriptors.addAll(columnDescriptors);
-	}
-
-	public String getCsvHeader() {
-		return columnsDescriptors.stream()
-				.map(ColumnDescriptor::getName)
-				.reduce((left, right) -> left + delimiter + right)
-				.orElse("");
 	}
 
 	@Override
