@@ -1,0 +1,35 @@
+# This config helps maintain coding style
+# between different IDEs
+
+# top-most EditorConfig file
+root = true
+
+
+[*]
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+charset = utf-8
+
+[{*.yml, *.yaml}]
+indent_size = 2
+
+[*.proto]
+indent_size = 2
+max_line_length = 80
+
+[*.java]
+max_line_length = 120
+indent_style = tab
+ij_continuation_indent_size = 8
+ij_java_class_count_to_use_import_on_demand = 99
+ij_java_names_count_to_use_import_on_demand = 99
+
+[*.fix]
+insert_final_newline = false
+
+[*.xml]
+indent_size = 2
+max_line_length = 300
+ij_xml_text_wrap = off
