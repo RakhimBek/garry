@@ -42,9 +42,20 @@ public class CsvGenerator {
 		final var extractor = new ColumnsNameExtractor();
 		final var columns = extractor.extract(file);
 
-		final var outputFile = outputDirectory
+		final var fileName = file.getName();
+		final var regionDirectoryName = fileName
+				.substring(3, fileName.length() - 4)
+				.replaceAll("[-_0-9a-z]+", "");
+
+
+		final var regionDirectoryPath = outputDirectory
 				.toPath()
-				.resolve(file.getName().concat(OUPUT_FILE_EXTENSION))
+				.resolve(regionDirectoryName);
+
+		regionDirectoryPath.toFile().mkdirs();
+
+		final var outputFile = regionDirectoryPath
+				.resolve(fileName.concat(OUPUT_FILE_EXTENSION))
 				.toFile();
 
 		try (
