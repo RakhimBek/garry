@@ -1,9 +1,9 @@
 package org.digis.descriptors.column;
 
-public class TimestampDescriptor implements ColumnDescriptor {
+public class BooleanDescriptor implements ColumnDescriptor {
 	private final String name;
 
-	public TimestampDescriptor(String name) {
+	public BooleanDescriptor(String name) {
 		this.name = name;
 	}
 
@@ -13,6 +13,6 @@ public class TimestampDescriptor implements ColumnDescriptor {
 
 	@Override
 	public String toString() {
-		return String.format("\t\"%s\" TIMESTAMP", name);
+		return String.format("\t\"%s\" BOOL", name);
 	}
 }

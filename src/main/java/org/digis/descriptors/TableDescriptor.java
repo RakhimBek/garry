@@ -33,10 +33,11 @@ public class TableDescriptor {
 	@Override
 	public String toString() {
 		final var builder = new StringBuilder()
-				.append(String.format("create table %s%n(%n", name));
+				.append(String.format("CREATE TABLE %s%n(%n", name));
 
-		final var primaryKey = String.format("\tid integer not null constraint pk_%s unique", name.toLowerCase());
+		final var primaryKey = String.format("\t\"ID\" INTEGER NOT NULL CONSTRAINT PK_%s UNIQUE", name.toUpperCase());
 		final var columns = columnsDescriptors.stream()
+				.filter(d -> !d.getName().equalsIgnoreCase("id"))
 				.map(Object::toString)
 				.reduce(primaryKey, (left, right) -> String.format("%s,%n%s", left, right));
 

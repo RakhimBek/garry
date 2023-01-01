@@ -1,6 +1,8 @@
 package org.digis.descriptors;
 
+import org.digis.descriptors.column.BooleanDescriptor;
 import org.digis.descriptors.column.ColumnDescriptor;
+import org.digis.descriptors.column.IntegerDescriptor;
 import org.digis.descriptors.column.TimestampDescriptor;
 import org.digis.descriptors.column.UuidDescriptor;
 import org.digis.descriptors.column.VarcharDescriptor;
@@ -20,12 +22,12 @@ import java.util.Map;
 
 public class TableDescriptorHelper {
 
-	private static final Map<String, String> sqlTypes = Map.of(
-			"xs:date", "timestamp",
-			"xs:long", "integer",
-			"xs:integer", "integer",
-			"xs:boolean", "boolean",
-			"xs:string", "varchar"
+	private static final Map<String, ColumnDescriptorFactory> typeFactories = Map.of(
+			"xs:date", (name, size) -> new TimestampDescriptor(name),
+			"xs:long", (name, size) -> new IntegerDescriptor(name),
+			"xs:integer", (name, size) -> new IntegerDescriptor(name),
+			"xs:boolean", (name, size) -> new BooleanDescriptor(name),
+			"xs:string", (name, size) -> new VarcharDescriptor(name, size)
 	);
 
 	public static TableDescriptor getTableDescriptor(File file) throws ParserConfigurationException, IOException, SAXException {
@@ -74,15 +76,15 @@ public class TableDescriptorHelper {
 			final var type = node.getAttributes().getNamedItem("type");
 			if (type != null) {
 				final var typeValue = type.getNodeValue();
-				final var sqlType = sqlTypes.getOrDefault(typeValue, "varchar");
+				//final var sqlType = typeFactories.getOrDefault(typeValue, "varchar");
 				if ("xs:date".equals(typeValue)) {
 					return new TimestampDescriptor(name);
 				} else if ("xs:long".equals(typeValue)) {
-					return new VarcharDescriptor(name, sqlType, 10);
+					return new IntegerDescriptor(name);
 				} else if ("xs:boolean".equals(typeValue)) {
-					return new VarcharDescriptor(name, sqlType, 10);
+					return typeFactories.get(typeValue).create(name, 10);
 				} else if ("xs:integer".equals(typeValue)) {
-					return new VarcharDescriptor(name, sqlType, 10);
+					return new IntegerDescriptor(name);
 				} else {
 					throw new IllegalStateException(String.format("Undefined type: %s for %s", typeValue, name));
 				}
@@ -96,7 +98,7 @@ public class TableDescriptorHelper {
 				}
 			}
 
-			return new VarcharDescriptor(name, "varchar", 255);
+			return new VarcharDescriptor(name, 255);
 		} catch (Exception e) {
 			throw new IllegalStateException(String.format("column: '%s'", name), e);
 		}
@@ -108,44 +110,38 @@ public class TableDescriptorHelper {
 			final var restrictionNode = simpleTypeChildList.item(i);
 			if ("xs:restriction".equals(restrictionNode.getNodeName())) {
 				final var baseType = restrictionNode.getAttributes().getNamedItem("base").getNodeValue();
-				final var sqlType = sqlTypes.get(baseType);
-
 				final var childNodes = restrictionNode.getChildNodes();
 				if (childNodes.getLength() == 0) {
-					return new VarcharDescriptor(name, sqlType, 10);
+					return typeFactories.get(baseType).create(name, 10);
 				}
 
 				for (int j = 0; j < childNodes.getLength(); j++) {
 					final var child = childNodes.item(j);
 					if ("xs:length".equals(child.getNodeName())) {
-						return new VarcharDescriptor(
+						return typeFactories.get(baseType).create(
 								name,
-								sqlType,
 								Integer.parseInt(child.getAttributes().getNamedItem("value").getNodeValue())
 						);
 					}
 
 					if ("xs:totalDigits".equals(child.getNodeName())) {
-						return new VarcharDescriptor(
+						return typeFactories.get(baseType).create(
 								name,
-								sqlType,
 								Integer.parseInt(child.getAttributes().getNamedItem("value").getNodeValue())
 						);
 					}
 
 					if ("xs:pattern".equals(child.getNodeName())) {
 						// final var pattern = child.getAttributes().getNamedItem("value").getNodeValue();
-						return new VarcharDescriptor(
+						return typeFactories.get(baseType).create(
 								name,
-								sqlType,
 								15
 						);
 					}
 
 					if ("xs:maxLength".equals(child.getNodeName())) {
-						return new VarcharDescriptor(
+						return typeFactories.get(baseType).create(
 								name,
-								sqlType,
 								Integer.parseInt(child.getAttributes().getNamedItem("value").getNodeValue())
 						);
 					}
@@ -173,9 +169,8 @@ public class TableDescriptorHelper {
 							}
 						}
 
-						return new VarcharDescriptor(
+						return typeFactories.get(baseType).create(
 								name,
-								sqlType,
 								maxEnumSize
 						);
 					}
@@ -185,10 +180,10 @@ public class TableDescriptorHelper {
 			}
 		}
 
-		return new VarcharDescriptor(
-				name,
-				"varchar",
-				255
-		);
+		return new VarcharDescriptor(name, 255);
+	}
+
+	private interface ColumnDescriptorFactory {
+		ColumnDescriptor create(String name, int size);
 	}
 }

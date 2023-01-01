@@ -13,6 +13,6 @@ public class UuidDescriptor implements ColumnDescriptor {
 
 	@Override
 	public String toString() {
-		return String.format("\t%s uuid", name);
+		return String.format("\t\"%s\" UUID", name);
 	}
 }
