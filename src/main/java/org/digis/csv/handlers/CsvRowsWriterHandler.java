@@ -68,7 +68,7 @@ public class CsvRowsWriterHandler extends DefaultHandler {
 		}
 
 		try {
-			if (csvValues.isEmpty()) {
+			if (!csvValues.isEmpty()) {
 				fileOutputStream.write(String.join(delimiter, csvValues).getBytes(StandardCharsets.UTF_8));
 				fileOutputStream.write(NEW_LINE_BYTES);
 				count++;

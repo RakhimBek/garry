@@ -15,9 +15,9 @@ import java.util.concurrent.Executors;
 
 public class CsvGenerator {
 	private static final int THREAD_COUNT = 20;
-	private static final String DELIMITER = ";";
-	private static final String OUPUT_FILE_EXTENSION = ".csv";
-	private static final int BUFFER_SIZE = 92 * 1024 * 1024; // 2 Mb
+	private static final String DELIMITER = "\t";
+	private static final String OUPUT_FILE_EXTENSION = ".tsv";
+	private static final int BUFFER_SIZE = 2 * 1024 * 1024; // 2 Mb
 
 	public void generate(List<File> fileList, File outputDirectory) {
 		final var executor = Executors.newFixedThreadPool(THREAD_COUNT);
@@ -41,7 +41,6 @@ public class CsvGenerator {
 	private File generate(File file, File outputDirectory) throws IOException, SAXException, ParserConfigurationException, NoRowsException {
 		final var extractor = new ColumnsNameExtractor();
 		final var columns = extractor.extract(file);
-		final var fileInputStream = new FileInputStream(file);
 
 		final var outputFile = outputDirectory
 				.toPath()
@@ -49,6 +48,7 @@ public class CsvGenerator {
 				.toFile();
 
 		try (
+				final var fileInputStream = new FileInputStream(file);
 				final var fileOutputStream = new FileOutputStream(outputFile);
 				final var bufferedOutputStream = new BufferedOutputStream(fileOutputStream, BUFFER_SIZE)
 		) {
