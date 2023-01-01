@@ -5,7 +5,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -23,6 +22,7 @@ public class CsvRowsWriterHandler extends DefaultHandler {
 	private final BufferedOutputStream fileOutputStream;
 	private final Map<String, String> values = new HashMap<>();
 	private int depth = 0;
+	private int count = 0;
 
 	public CsvRowsWriterHandler(String delimiter, List<String> columns, BufferedOutputStream fileOutputStream) {
 		this.delimiter = delimiter;
@@ -68,10 +68,17 @@ public class CsvRowsWriterHandler extends DefaultHandler {
 		}
 
 		try {
-			fileOutputStream.write(String.join(delimiter, csvValues).getBytes(StandardCharsets.UTF_8));
-			fileOutputStream.write(NEW_LINE_BYTES);
+			if (csvValues.isEmpty()) {
+				fileOutputStream.write(String.join(delimiter, csvValues).getBytes(StandardCharsets.UTF_8));
+				fileOutputStream.write(NEW_LINE_BYTES);
+				count++;
+			}
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
 		}
+	}
+
+	public int getCount() {
+		return count;
 	}
 }

@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.concurrent.Executors;
 
 public class Main {
-	private static final int THREAD_COUNT = 5;
+	private static final int THREAD_COUNT = 20;
 
 	public static void main(String[] args) {
 		final var outputDirectory = new File(args[0]);
@@ -31,6 +31,8 @@ public class Main {
 			final var generatedFile = csvGenerator.generate(file, outputDirectory);
 			System.out.printf("%s: '%s' generated from '%s'%n", tid, generatedFile.getName(), file.getAbsolutePath());
 
+		} catch (NoRowsException e) {
+			System.out.printf("%s: Empty rows on '%s'%n", tid, file.getAbsolutePath());
 		} catch (Exception e) {
 			System.out.printf("%s: Generation failed for '%s'%n", tid, file.getAbsolutePath());
 		}
