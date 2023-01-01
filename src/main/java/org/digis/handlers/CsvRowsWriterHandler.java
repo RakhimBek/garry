@@ -4,6 +4,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -19,11 +20,11 @@ public class CsvRowsWriterHandler extends DefaultHandler {
 
 	private final String delimiter;
 	private final List<String> columns;
-	private final FileOutputStream fileOutputStream;
+	private final BufferedOutputStream fileOutputStream;
 	private final Map<String, String> values = new HashMap<>();
 	private int depth = 0;
 
-	public CsvRowsWriterHandler(String delimiter, List<String> columns, FileOutputStream fileOutputStream) {
+	public CsvRowsWriterHandler(String delimiter, List<String> columns, BufferedOutputStream fileOutputStream) {
 		this.delimiter = delimiter;
 		this.columns = columns;
 		this.fileOutputStream = fileOutputStream;

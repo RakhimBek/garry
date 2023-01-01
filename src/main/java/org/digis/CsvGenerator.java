@@ -5,6 +5,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -24,9 +25,11 @@ public class CsvGenerator {
 				.resolve(file.getName().concat(OUPUT_FILE_EXTENSION))
 				.toFile();
 
-		try (final var fileOutputStream = new FileOutputStream(outputFile)) {
-
-			final var csvRowsWriterHandler = new CsvRowsWriterHandler(DELIMITER, columns, fileOutputStream);
+		try (
+				final var fileOutputStream = new FileOutputStream(outputFile);
+				final var bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+		) {
+			final var csvRowsWriterHandler = new CsvRowsWriterHandler(DELIMITER, columns, bufferedOutputStream);
 			final var saxParserFactory = SAXParserFactory.newInstance();
 			final var parser = saxParserFactory.newSAXParser();
 			parser.parse(fileInputStream, csvRowsWriterHandler);
