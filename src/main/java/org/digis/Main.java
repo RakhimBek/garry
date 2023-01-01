@@ -26,12 +26,13 @@ public class Main {
 	}
 
 	private static void generate(CsvGenerator csvGenerator, File file, File outputDirectory) {
+		final var tid = Thread.currentThread().getId();
 		try {
 			final var generatedFile = csvGenerator.generate(file, outputDirectory);
-			System.out.printf("'%s' generated from '%s'%n", generatedFile.getName(), file.getAbsolutePath());
+			System.out.printf("%s: '%s' generated from '%s'%n", tid, generatedFile.getName(), file.getAbsolutePath());
 
 		} catch (Exception e) {
-			System.out.printf("Generation failed for '%s'%n", file.getAbsolutePath());
+			System.out.printf("%s: Generation failed for '%s'%n", tid, file.getAbsolutePath());
 		}
 	}
 }
