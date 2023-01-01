@@ -63,8 +63,10 @@ public class CsvRowsWriterHandler extends DefaultHandler {
 
 		final List<String> csvValues = new ArrayList<>();
 		for (String column : columns) {
-			final var value = values.get(column);
-			csvValues.add(Objects.requireNonNullElse(value, EMPTY_STRING));
+			final var value = Objects.requireNonNullElse(values.get(column), EMPTY_STRING)
+					.trim();
+
+			csvValues.add(value);
 		}
 
 		try {
