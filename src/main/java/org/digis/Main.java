@@ -1,8 +1,11 @@
 package org.digis;
 
 import java.io.File;
+import java.util.concurrent.Executors;
 
 public class Main {
+	private static final int THREAD_COUNT = 5;
+
 	public static void main(String[] args) {
 		final var outputDirectory = new File(args[0]);
 		if (!outputDirectory.mkdirs()) {
@@ -11,12 +14,15 @@ public class Main {
 		}
 
 		final var csvGenerator = new CsvGenerator();
+		final var executor = Executors.newFixedThreadPool(THREAD_COUNT);
 		for (String fileName : args) {
 			final var file = new File(fileName);
 			if (file.isFile()) {
-				generate(csvGenerator, file, outputDirectory);
+				executor.execute(() -> generate(csvGenerator, file, outputDirectory));
 			}
 		}
+
+		executor.shutdown();
 	}
 
 	private static void generate(CsvGenerator csvGenerator, File file, File outputDirectory) {

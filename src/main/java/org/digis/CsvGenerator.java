@@ -14,6 +14,7 @@ import java.io.IOException;
 public class CsvGenerator {
 	private static final String DELIMITER = ";";
 	private static final String OUPUT_FILE_EXTENSION = ".csv";
+	private static final int BUFFER_SIZE = 2 * 1024 * 1024; // 2 Mb
 
 	public File generate(File file, File outputDirectory) throws IOException, SAXException, ParserConfigurationException {
 		final var extractor = new ColumnsNameExtractor();
@@ -27,7 +28,7 @@ public class CsvGenerator {
 
 		try (
 				final var fileOutputStream = new FileOutputStream(outputFile);
-				final var bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+				final var bufferedOutputStream = new BufferedOutputStream(fileOutputStream, BUFFER_SIZE)
 		) {
 			final var csvRowsWriterHandler = new CsvRowsWriterHandler(DELIMITER, columns, bufferedOutputStream);
 			final var saxParserFactory = SAXParserFactory.newInstance();
