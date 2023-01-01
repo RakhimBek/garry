@@ -7,24 +7,29 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class CsvGenerator {
 	private static final String DELIMITER = ";";
-	private final File file;
+	private static final String OUPUT_FILE_EXTENSION = ".csv";
 
-	public CsvGenerator(File file) {
-		this.file = file;
-	}
-
-	public void generate() throws ParserConfigurationException, SAXException, IOException {
+	public File generate(File file) throws IOException, SAXException, ParserConfigurationException {
 		final var extractor = new ColumnsNameExtractor();
 		final var columns = extractor.extract(file);
-
 		final var fileInputStream = new FileInputStream(file);
-		final var csvRowsWriterHandler = new CsvRowsWriterHandler(DELIMITER, columns);
-		final var saxParserFactory = SAXParserFactory.newInstance();
-		final var parser = saxParserFactory.newSAXParser();
-		parser.parse(fileInputStream, csvRowsWriterHandler);
+
+		final var outputFile = new File(file.getName().concat(OUPUT_FILE_EXTENSION));
+		try (final var fileOutputStream = new FileOutputStream(outputFile)) {
+
+			final var csvRowsWriterHandler = new CsvRowsWriterHandler(DELIMITER, columns, fileOutputStream);
+			final var saxParserFactory = SAXParserFactory.newInstance();
+			final var parser = saxParserFactory.newSAXParser();
+			parser.parse(fileInputStream, csvRowsWriterHandler);
+			return outputFile;
+		} catch (Exception e) {
+			outputFile.delete();
+			throw e;
+		}
 	}
 }
