@@ -1,6 +1,6 @@
-package org.digis;
+package org.digis.csv;
 
-import org.digis.handlers.ColumnNamesHandler;
+import org.digis.csv.handlers.ColumnNamesHandler;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;

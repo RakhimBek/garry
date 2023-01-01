@@ -1,10 +1,12 @@
 package org.digis;
 
+import org.digis.csv.CsvGenerator;
+
 import java.io.File;
-import java.util.concurrent.Executors;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class Main {
-	private static final int THREAD_COUNT = 20;
 
 	public static void main(String[] args) {
 		final var outputDirectory = new File(args[0]);
@@ -13,26 +15,12 @@ public class Main {
 			return;
 		}
 
+		final var fileList = Arrays.stream(args)
+				.map(File::new)
+				.filter(File::isFile)
+				.collect(Collectors.toList());
+
 		final var csvGenerator = new CsvGenerator();
-		final var executor = Executors.newFixedThreadPool(THREAD_COUNT);
-		for (String fileName : args) {
-			final var file = new File(fileName);
-			if (file.isFile()) {
-				executor.execute(() -> {
-					final var tid = Thread.currentThread().getId();
-					try {
-						final var generatedFile = csvGenerator.generate(file, outputDirectory);
-						System.out.printf("%s: '%s' generated from '%s'%n", tid, generatedFile.getName(), file.getAbsolutePath());
-
-					} catch (NoRowsException e) {
-						System.out.printf("%s: Empty rows on '%s'%n", tid, file.getAbsolutePath());
-					} catch (Exception e) {
-						System.out.printf("%s: Generation failed for '%s'%n", tid, file.getAbsolutePath());
-					}
-				});
-			}
-		}
-
-		executor.shutdown();
+		csvGenerator.generate(fileList, outputDirectory);
 	}
 }

@@ -1,4 +1,4 @@
-package org.digis.handlers;
+package org.digis.csv.handlers;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
