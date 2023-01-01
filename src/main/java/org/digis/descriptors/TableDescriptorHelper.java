@@ -76,15 +76,8 @@ public class TableDescriptorHelper {
 			final var type = node.getAttributes().getNamedItem("type");
 			if (type != null) {
 				final var typeValue = type.getNodeValue();
-				//final var sqlType = typeFactories.getOrDefault(typeValue, "varchar");
-				if ("xs:date".equals(typeValue)) {
-					return new TimestampDescriptor(name);
-				} else if ("xs:long".equals(typeValue)) {
-					return new IntegerDescriptor(name);
-				} else if ("xs:boolean".equals(typeValue)) {
+				if (typeFactories.containsKey(typeValue)) {
 					return typeFactories.get(typeValue).create(name, 10);
-				} else if ("xs:integer".equals(typeValue)) {
-					return new IntegerDescriptor(name);
 				} else {
 					throw new IllegalStateException(String.format("Undefined type: %s for %s", typeValue, name));
 				}
