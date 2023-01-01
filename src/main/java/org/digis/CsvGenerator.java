@@ -14,12 +14,16 @@ public class CsvGenerator {
 	private static final String DELIMITER = ";";
 	private static final String OUPUT_FILE_EXTENSION = ".csv";
 
-	public File generate(File file) throws IOException, SAXException, ParserConfigurationException {
+	public File generate(File file, File outputDirectory) throws IOException, SAXException, ParserConfigurationException {
 		final var extractor = new ColumnsNameExtractor();
 		final var columns = extractor.extract(file);
 		final var fileInputStream = new FileInputStream(file);
 
-		final var outputFile = new File(file.getName().concat(OUPUT_FILE_EXTENSION));
+		final var outputFile = outputDirectory
+				.toPath()
+				.resolve(file.getName().concat(OUPUT_FILE_EXTENSION))
+				.toFile();
+
 		try (final var fileOutputStream = new FileOutputStream(outputFile)) {
 
 			final var csvRowsWriterHandler = new CsvRowsWriterHandler(DELIMITER, columns, fileOutputStream);
