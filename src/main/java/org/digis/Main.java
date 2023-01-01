@@ -18,23 +18,21 @@ public class Main {
 		for (String fileName : args) {
 			final var file = new File(fileName);
 			if (file.isFile()) {
-				executor.execute(() -> generate(csvGenerator, file, outputDirectory));
+				executor.execute(() -> {
+					final var tid = Thread.currentThread().getId();
+					try {
+						final var generatedFile = csvGenerator.generate(file, outputDirectory);
+						System.out.printf("%s: '%s' generated from '%s'%n", tid, generatedFile.getName(), file.getAbsolutePath());
+
+					} catch (NoRowsException e) {
+						System.out.printf("%s: Empty rows on '%s'%n", tid, file.getAbsolutePath());
+					} catch (Exception e) {
+						System.out.printf("%s: Generation failed for '%s'%n", tid, file.getAbsolutePath());
+					}
+				});
 			}
 		}
 
 		executor.shutdown();
-	}
-
-	private static void generate(CsvGenerator csvGenerator, File file, File outputDirectory) {
-		final var tid = Thread.currentThread().getId();
-		try {
-			final var generatedFile = csvGenerator.generate(file, outputDirectory);
-			System.out.printf("%s: '%s' generated from '%s'%n", tid, generatedFile.getName(), file.getAbsolutePath());
-
-		} catch (NoRowsException e) {
-			System.out.printf("%s: Empty rows on '%s'%n", tid, file.getAbsolutePath());
-		} catch (Exception e) {
-			System.out.printf("%s: Generation failed for '%s'%n", tid, file.getAbsolutePath());
-		}
 	}
 }
